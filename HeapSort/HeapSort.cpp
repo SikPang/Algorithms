@@ -1,17 +1,7 @@
 #include "HeapSort.hpp"
 
-#include <vector>
-#include <iostream>
-
 namespace heap
 {
-
-void print(std::vector<int>& buf)
-{
-	for (int i=0; i<buf.size(); ++i)
-		std::cout << buf[i] << " ";
-	std::cout << "\n";
-}
 
 static void swap(int& first, int& second)
 {
@@ -20,58 +10,54 @@ static void swap(int& first, int& second)
 	second = temp;
 }
 
-	// 이미 돼있다.
+/*
 
-	/*
-					0
-			1				2
-		3		4		5		6
-	7	8	9
-	
-	2x+1, 2x+2
+2x+1, 2x+2
 
-	(x-1)/2
-	
-	0, 1, 2
-	1, 3, 4
-	2, 5, 6
-	3, 7, 8
-	4,  9, 10
-	*/
+(x-1)/2
+
+*/
 
 void sort(std::vector<int>& buf)
 {
-	// for (int i=0; i<buf.size(); ++i)
-	// {
-	// 	int left = 2*i+1;
-	// 	int right = 2*i+2;
-
-	// 	if (left < buf.size())
-	// 	{
-	// 		buf[left];
-
-	// 	}
-	// 	print(buf);
-	// }
-	for (int i=1; i<buf.size(); ++i)
+	// heapify
+	for (int i=1; i<(int)buf.size(); ++i)
 	{
-		int c=i;
-		do {
-			int root = (c-1)/2;
-			if (buf[root] < buf[c])
-				swap(buf[root], buf[c]);
-			c=root;
-		}while (c!=0);
-		print(buf);
+		int cur = i;
+		while (cur > 0)
+		{
+			int parent = (cur - 1) / 2;
+
+			if (buf[parent] < buf[cur])
+				swap(buf[parent], buf[cur]);
+			cur = parent;
+		}
+	}
+
+	// swap maxValue(firstElement) and lastElement
+	for (int i=(int)buf.size()-1; i>=0; --i)
+	{
+		swap(buf[0], buf[i]);
+		int parent = 0;
+
+		// and then heapify again
+		while (true)
+		{
+			int cur = 2*parent+1;
+
+			if (cur >= i)
+				break;
+
+			// 어차피 큰 게 위로 와야되니까, 큰 거랑 바꿔야 함
+			// 바꾼게 큰 거니까 바꾼 걸로 내려가서 계속 수행하면 됨
+			// 작은 거는 안 건드렸으니까 따로 볼 필요가 없음 
+			if (cur+1 < i && buf[cur+1] > buf[cur])
+				cur = cur+1;
+			if (buf[parent] < buf[cur])
+				swap(buf[parent], buf[cur]);
+			parent = cur;
+		}
 	}
 }
 
-}
-
-int main()
-{
-	std::vector<int> buf = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-	heap::print(buf);
-	heap::sort(buf);
-	heap::print(buf);
 }
